@@ -1,14 +1,22 @@
+from rest_framework.serializers import ModelSerializer
+
 from tasks.models import Employee, Task
 
 
-class EmployeeSerializer:
+class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['full_name', 'position']
+        fields = ["full_name", "position"]
 
 
-class TaskSerializer:
+class TaskSerializer(ModelSerializer):
     class Meta:
         model = Task
-        fields = ['title', 'parent_task', 'employee', 'start_date', 'end_date', 'comments']
-
+        fields = [
+            "title",
+            "parent_task",
+            "employee",
+            "start_date",
+            "end_date",
+            "comments",
+        ]
