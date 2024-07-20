@@ -15,6 +15,11 @@ class TaskCreateAPIView(CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
+    def perform_create(self, serializer):
+        task = serializer.save()
+        task.owner = self.request.user
+        task.save()
+
 
 class TaskListAPIView(ListAPIView):
     queryset = Task.objects.all()

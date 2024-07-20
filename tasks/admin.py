@@ -26,8 +26,7 @@ class TaskAdmin(admin.ModelAdmin):
         "end_date",
         "status",
         "comments",
+        "owner",
     )
     list_filter = ("employee",)
     search_fields = ("title",)
-
-

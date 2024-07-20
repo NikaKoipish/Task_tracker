@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {"null": True, "blank": True}
 
 
@@ -38,6 +40,9 @@ class Task(models.Model):
         max_length=20, choices=STATUS, default="not_started", verbose_name="Статус"
     )
     comments = models.TextField(verbose_name="Комментарии к задаче", **NULLABLE)
+    owner = models.ForeignKey(
+        User, verbose_name="создатель", on_delete=models.CASCADE, **NULLABLE
+    )
 
     def __str__(self):
         return f"{self.title}: {self.status}"

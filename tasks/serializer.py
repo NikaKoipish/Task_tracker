@@ -19,4 +19,5 @@ class TaskSerializer(ModelSerializer):
             "start_date",
             "end_date",
             "comments",
+            "owner",
         ]
