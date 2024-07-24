@@ -21,7 +21,6 @@ class TaskAdmin(admin.ModelAdmin):
         "id",
         "title",
         "parent_task",
-        "employee",
         "start_date",
         "end_date",
         "status",

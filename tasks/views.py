@@ -6,6 +6,7 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import OrderingFilter
 
 from tasks.models import Employee, Task
 from tasks.serializer import EmployeeSerializer, TaskSerializer
@@ -44,3 +45,7 @@ class TaskDestroyAPIView(DestroyAPIView):
 class EmployeeViewSet(ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    filter_backends = (
+        OrderingFilter,
+    )
+    ordering_fields = "__all__" # как сделать кастомное поле частью сортировки?

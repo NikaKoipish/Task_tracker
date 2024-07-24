@@ -32,7 +32,7 @@ class Task(models.Model):
         "self", on_delete=models.CASCADE, **NULLABLE, verbose_name="Родительская задача"
     )
     employee = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, verbose_name="Иполнитель"
+        Employee, on_delete=models.CASCADE, verbose_name="Иcполнитель"
     )
     start_date = models.DateField(verbose_name="Дата начала")
     end_date = models.DateField(verbose_name="Дата окончания")
@@ -43,6 +43,7 @@ class Task(models.Model):
     owner = models.ForeignKey(
         User, verbose_name="создатель", on_delete=models.CASCADE, **NULLABLE
     )
+    is_active = models.BooleanField(default=True, verbose_name="Признак активности задачи")
 
     def __str__(self):
         return f"{self.title}: {self.status}"
