@@ -7,7 +7,7 @@ from tasks.views import (
     TaskCreateAPIView,
     TaskRetrieveAPIView,
     TaskUpdateAPIView,
-    TaskDestroyAPIView,
+    TaskDestroyAPIView, ImportantTaskListAPIView,
 )
 
 app_name = TasksConfig.name
@@ -17,6 +17,7 @@ router.register(r"employee", EmployeeViewSet, basename="employee")
 
 urlpatterns = [
     path("", TaskListAPIView.as_view(), name="task_list"),
+    path("important/", ImportantTaskListAPIView.as_view(), name="important_task_list"),
     path("create/", TaskCreateAPIView.as_view(), name="task_create"),
     path("<int:pk>/", TaskRetrieveAPIView.as_view(), name="task_retrieve"),
     path("<int:pk>/update/", TaskUpdateAPIView.as_view(), name="task_update"),

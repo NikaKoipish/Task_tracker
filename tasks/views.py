@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -9,7 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter
 
 from tasks.models import Employee, Task
-from tasks.serializer import EmployeeSerializer, TaskSerializer
+from tasks.serializer import EmployeeSerializer, TaskSerializer, ImportantTaskSerializer
 
 
 class TaskCreateAPIView(CreateAPIView):
@@ -25,6 +26,17 @@ class TaskCreateAPIView(CreateAPIView):
 class TaskListAPIView(ListAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        self.queryset = Task.objects.filter(
+            Q(status="not_started")
+        )
+        return self.queryset
+
+
+class ImportantTaskListAPIView(ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = ImportantTaskSerializer
 
 
 class TaskRetrieveAPIView(RetrieveAPIView):

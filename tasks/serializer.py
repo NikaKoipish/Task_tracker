@@ -20,14 +20,36 @@ class EmployeeSerializer(ModelSerializer):
 
     class Meta:
         model = Employee
-        #fields = "__all__"
         fields = ("full_name", "tasks", "count_active_tasks")
 
 
 class TaskSerializer(ModelSerializer):
-    employee = EmployeeSerializer()
+    term_days = SerializerMethodField()
+
+    def get_term_days(self, task):
+        if task.end_date and task.start_date:
+            return (task.end_date - task.start_date).days
 
     class Meta:
         model = Task
         fields = "__all__"
 
+
+class ImportantTaskSerializer(ModelSerializer):
+    term_days = SerializerMethodField()
+    employees = SerializerMethodField()
+
+    def get_employees(self, task):
+        employees_task = Task.objects.filter(id=task.id)
+        employees_list = []
+        for task in employees_task:
+            employees_list.append(task.employee.full_name)
+        return employees_list
+
+    def get_term_days(self, task):
+        if task.end_date and task.start_date:
+            return (task.end_date - task.start_date).days
+
+    class Meta:
+        model = Task
+        fields = ("title", "term_days", "employees",)
