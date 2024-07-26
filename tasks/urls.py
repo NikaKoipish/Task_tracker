@@ -2,18 +2,21 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path
 from tasks.apps import TasksConfig
 from tasks.views import (
-    EmployeeViewSet,
     TaskListAPIView,
     TaskCreateAPIView,
     TaskRetrieveAPIView,
     TaskUpdateAPIView,
-    TaskDestroyAPIView, ImportantTaskListAPIView,
+    TaskDestroyAPIView,
+    ImportantTaskListAPIView,
+    EmployeeListAPIView,
+    EmployeeCreateAPIView,
+    EmployeeRetrieveAPIView,
+    EmployeeUpdateAPIView,
+    EmployeeDestroyAPIView,
+    EmployeeActiveTasksListAPIView,
 )
 
 app_name = TasksConfig.name
-
-router = DefaultRouter()
-router.register(r"employee", EmployeeViewSet, basename="employee")
 
 urlpatterns = [
     path("", TaskListAPIView.as_view(), name="task_list"),
@@ -22,4 +25,26 @@ urlpatterns = [
     path("<int:pk>/", TaskRetrieveAPIView.as_view(), name="task_retrieve"),
     path("<int:pk>/update/", TaskUpdateAPIView.as_view(), name="task_update"),
     path("<int:pk>/delete/", TaskDestroyAPIView.as_view(), name="task_delete"),
-] + router.urls
+    path("employee/", EmployeeListAPIView.as_view(), name="employee_list"),
+    path(
+        "employee/active_tasks/",
+        EmployeeActiveTasksListAPIView.as_view(),
+        name="employee_active_tasks_list",
+    ),
+    path("employee/create/", EmployeeCreateAPIView.as_view(), name="employee_create"),
+    path(
+        "employee/<int:pk>/",
+        EmployeeRetrieveAPIView.as_view(),
+        name="employee_retrieve",
+    ),
+    path(
+        "employee/<int:pk>/update/",
+        EmployeeUpdateAPIView.as_view(),
+        name="employee_update",
+    ),
+    path(
+        "employee/<int:pk>/delete/",
+        EmployeeDestroyAPIView.as_view(),
+        name="employee_delete",
+    ),
+]

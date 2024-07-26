@@ -4,6 +4,12 @@ from tasks.models import Employee, Task
 
 
 class EmployeeSerializer(ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = "__all__"
+
+
+class EmployeeActiveTasksSerializer(ModelSerializer):
     count_active_tasks = SerializerMethodField()
     tasks = SerializerMethodField()
 
@@ -38,6 +44,7 @@ class TaskSerializer(ModelSerializer):
 class ImportantTaskSerializer(ModelSerializer):
     term_days = SerializerMethodField()
     employees = SerializerMethodField()
+    parent_task_title = SerializerMethodField()
 
     def get_employees(self, task):
         employees_task = Task.objects.filter(id=task.id)
@@ -50,6 +57,17 @@ class ImportantTaskSerializer(ModelSerializer):
         if task.end_date and task.start_date:
             return (task.end_date - task.start_date).days
 
+    def get_parent_task_title(self, task):
+        return task.parent_task.title
+
     class Meta:
         model = Task
-        fields = ("title", "term_days", "employees",)
+        fields = (
+            "title",
+            "parent_task_title",
+            "start_date",
+            "end_date",
+            "comments",
+            "term_days",
+            "employees",
+        )

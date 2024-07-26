@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Count
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -6,11 +6,15 @@ from rest_framework.generics import (
     UpdateAPIView,
     DestroyAPIView,
 )
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.filters import OrderingFilter
+
 
 from tasks.models import Employee, Task
-from tasks.serializer import EmployeeSerializer, TaskSerializer, ImportantTaskSerializer
+from tasks.serializer import (
+    EmployeeSerializer,
+    TaskSerializer,
+    ImportantTaskSerializer,
+    EmployeeActiveTasksSerializer,
+)
 
 
 class TaskCreateAPIView(CreateAPIView):
@@ -27,16 +31,18 @@ class TaskListAPIView(ListAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-    def get_queryset(self):
-        self.queryset = Task.objects.filter(
-            Q(status="not_started")
-        )
-        return self.queryset
-
 
 class ImportantTaskListAPIView(ListAPIView):
     queryset = Task.objects.all()
     serializer_class = ImportantTaskSerializer
+
+    def get_queryset(self):
+        self.queryset = Task.objects.filter(
+            Q(status="not_started"),
+            Q(is_important=True),
+            Q(parent_task__status=Task.STATUS_IN_PROGRESS),
+        )
+        return self.queryset
 
 
 class TaskRetrieveAPIView(RetrieveAPIView):
@@ -54,10 +60,39 @@ class TaskDestroyAPIView(DestroyAPIView):
     serializer_class = TaskSerializer
 
 
-class EmployeeViewSet(ModelViewSet):
+class EmployeeCreateAPIView(CreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
-    filter_backends = (
-        OrderingFilter,
-    )
-    ordering_fields = "__all__" # как сделать кастомное поле частью сортировки?
+
+
+class EmployeeListAPIView(ListAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+class EmployeeActiveTasksListAPIView(ListAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeActiveTasksSerializer
+
+    def get_queryset(self):
+        self.queryset = Employee.objects.all()
+        self.queryset = self.queryset.select_related()
+        self.queryset = Employee.objects.annotate(tasks_count=Count("task")).order_by(
+            "-tasks_count"
+        )
+        return self.queryset
+
+
+class EmployeeRetrieveAPIView(RetrieveAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeActiveTasksSerializer
+
+
+class EmployeeUpdateAPIView(UpdateAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+class EmployeeDestroyAPIView(DestroyAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
