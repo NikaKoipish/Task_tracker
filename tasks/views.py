@@ -6,8 +6,6 @@ from rest_framework.generics import (
     UpdateAPIView,
     DestroyAPIView,
 )
-
-
 from tasks.models import Employee, Task
 from tasks.serializer import (
     EmployeeSerializer,
@@ -38,7 +36,7 @@ class ImportantTaskListAPIView(ListAPIView):
 
     def get_queryset(self):
         self.queryset = Task.objects.filter(
-            Q(status="not_started"),
+            Q(status=Task.STATUS_NOT_STARTED),
             Q(is_important=True),
             Q(parent_task__status=Task.STATUS_IN_PROGRESS),
         )
