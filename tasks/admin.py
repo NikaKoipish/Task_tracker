@@ -20,6 +20,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "title",
+        "employee",
         "parent_task",
         "start_date",
         "end_date",

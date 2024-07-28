@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from django.db.models import Q
 from tasks.models import Employee, Task
+from tasks.validators import TitleValidator
 
 
 class EmployeeSerializer(ModelSerializer):
@@ -39,6 +40,7 @@ class TaskSerializer(ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
+        validators = [TitleValidator(field="title")]
 
 
 class ImportantTaskSerializer(ModelSerializer):

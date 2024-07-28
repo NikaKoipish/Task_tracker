@@ -1,4 +1,5 @@
 from django.db.models import Q, Count
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -71,6 +72,8 @@ class EmployeeListAPIView(ListAPIView):
 class EmployeeActiveTasksListAPIView(ListAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeActiveTasksSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['full_name']
 
     def get_queryset(self):
         self.queryset = Employee.objects.all()
