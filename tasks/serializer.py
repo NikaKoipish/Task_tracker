@@ -43,16 +43,17 @@ class TaskSerializer(ModelSerializer):
         fields = "__all__"
         validators = [
             TitleValidator(field="title"),
-            UniqueTogetherValidator(fields=["title"], queryset=Task.objects.all())
+            UniqueTogetherValidator(fields=["title"], queryset=Task.objects.all()),
         ]
 
 
 class ImportantTaskSerializer(ModelSerializer):
     term_days = SerializerMethodField()
-    employees = SerializerMethodField()
+    current_employees = SerializerMethodField()
     parent_task_title = SerializerMethodField()
+    available_employees = SerializerMethodField()
 
-    def get_employees(self, task):
+    def get_current_employees(self, task):
         employees_task = Task.objects.filter(id=task.id)
         employees_list = []
         for task in employees_task:
@@ -66,6 +67,31 @@ class ImportantTaskSerializer(ModelSerializer):
     def get_parent_task_title(self, task):
         return task.parent_task.title
 
+    def get_available_employees(self, task):
+        employees = Employee.objects.all()
+        emp_data = {}
+        available_employees = []
+        # ищем наименее загруженного сотрудника
+        for emp in employees:
+            list_task = emp.task_set.all()
+            emp_data[emp.pk] = len(list_task)
+        min_count = min(emp_data.values())
+        if task.employee.full_name not in available_employees:
+            available_employees = [
+                emp.full_name for emp in employees if emp_data[emp.pk] == min_count
+            ]
+        # ищем подходящего сотрудника, выполняющего родительскую задачу
+        for emp in employees:
+            tasks = emp.task_set.all()
+            for t in tasks:
+                if (
+                    task.parent_task == t.parent_task
+                    and len(tasks) - min_count <= 2
+                    and emp.full_name not in available_employees
+                ):
+                    available_employees.append(emp.full_name)
+        return available_employees
+
     class Meta:
         model = Task
         fields = (
@@ -73,7 +99,7 @@ class ImportantTaskSerializer(ModelSerializer):
             "parent_task_title",
             "start_date",
             "end_date",
-            "comments",
             "term_days",
-            "employees",
+            "current_employees",
+            "available_employees",
         )

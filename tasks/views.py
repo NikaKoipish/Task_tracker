@@ -73,7 +73,7 @@ class EmployeeActiveTasksListAPIView(ListAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeActiveTasksSerializer
     filter_backends = [SearchFilter]
-    search_fields = ['full_name']
+    search_fields = ["full_name"]
 
     def get_queryset(self):
         self.queryset = Employee.objects.all()
