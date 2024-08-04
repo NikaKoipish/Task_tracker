@@ -44,9 +44,7 @@ class Task(models.Model):
         max_length=20, choices=STATUS, default=STATUS_NOT_STARTED, verbose_name="Статус"
     )
     comments = models.TextField(verbose_name="Комментарии к задаче", **NULLABLE)
-    owner = models.ForeignKey(
-        User, verbose_name="создатель", on_delete=models.CASCADE, **NULLABLE
-    )
+    owner = models.TextField(verbose_name="создатель", **NULLABLE)
     is_active = models.BooleanField(
         default=True, verbose_name="Признак активности задачи"
     )
